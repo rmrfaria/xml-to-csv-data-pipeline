@@ -39,7 +39,7 @@ class PipelineService:
         self.instrument_service = instrument_service
         self.dataframe_service = dataframe_service
 
-    def run(self) -> Path:
+    def run(self, output_path: Path = OUTPUT_FILE_PATH) -> Path:
         """Execute the full pipeline and return the output CSV path.
 
         Returns:
@@ -59,7 +59,7 @@ class PipelineService:
         LOGGER.info("Parsed %s instrument records", len(records))
 
         dataframe = self.dataframe_service.to_dataframe(records)
-        self.dataframe_service.save_csv(dataframe, OUTPUT_FILE_PATH)
+        self.dataframe_service.save_csv(dataframe, output_path)
 
-        LOGGER.info("CSV successfully written to %s", OUTPUT_FILE_PATH)
-        return OUTPUT_FILE_PATH
+        LOGGER.info("CSV successfully written to %s", output_path)
+        return output_path
