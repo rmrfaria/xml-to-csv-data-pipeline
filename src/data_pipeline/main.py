@@ -7,6 +7,7 @@ from data_pipeline.services.instrument_xml_service import InstrumentXMLService
 from data_pipeline.services.pipeline_service import PipelineService
 from data_pipeline.services.register_service import RegisterService
 from data_pipeline.services.zip_service import ZipService
+from data_pipeline.storage.s3_storage import S3StorageClient
 
 
 def main() -> None:
@@ -19,6 +20,7 @@ def main() -> None:
         zip_service=ZipService(),
         instrument_service=InstrumentXMLService(),
         dataframe_service=DataFrameService(),
+        storage_client=S3StorageClient(),
     )
     pipeline_service.run()
 

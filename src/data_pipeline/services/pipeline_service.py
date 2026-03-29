@@ -4,11 +4,12 @@ import logging
 from pathlib import Path
 
 from data_pipeline.clients.http_client import HTTPClient
-from data_pipeline.config import OUTPUT_FILE_PATH, REGISTER_URL
+from data_pipeline.config import OUTPUT_FILE_PATH, REGISTER_URL, S3_DESTINATION_PATH
 from data_pipeline.services.dataframe_service import DataFrameService
 from data_pipeline.services.instrument_xml_service import InstrumentXMLService
 from data_pipeline.services.register_service import RegisterService
 from data_pipeline.services.zip_service import ZipService
+from data_pipeline.storage.s3_storage import S3StorageClient
 
 LOGGER = logging.getLogger(__name__)
 
@@ -23,6 +24,7 @@ class PipelineService:
         zip_service: ZipService,
         instrument_service: InstrumentXMLService,
         dataframe_service: DataFrameService,
+        storage_client: S3StorageClient,
     ) -> None:
         """Initialize the pipeline with its dependencies.
 
@@ -38,6 +40,7 @@ class PipelineService:
         self.zip_service = zip_service
         self.instrument_service = instrument_service
         self.dataframe_service = dataframe_service
+        self.storage_client = storage_client
 
     def run(self, output_path: Path = OUTPUT_FILE_PATH) -> Path:
         """Execute the full pipeline and return the output CSV path.
@@ -60,6 +63,8 @@ class PipelineService:
 
         dataframe = self.dataframe_service.to_dataframe(records)
         self.dataframe_service.save_csv(dataframe, output_path)
+
+        self.storage_client.upload_file(output_path, S3_DESTINATION_PATH)
 
         LOGGER.info("CSV successfully written to %s", output_path)
         return output_path

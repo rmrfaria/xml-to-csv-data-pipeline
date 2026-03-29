@@ -12,6 +12,7 @@ The pipeline performs the following steps:
 4. Parses instrument XML data
 5. Transforms the data into a tabular format
 6. Generates a CSV file with derived fields
+7. Passes the generated CSV to a simulated S3 storage step
 
 ## Output
 
@@ -74,12 +75,14 @@ tests/
 - Logging is centralized and consistent
 - Unit and integration tests ensure correctness
 - CI is configured using GitHub Actions
+- A simulated S3 storage client is used to represent the required cloud storage step without relying on a real AWS bucket
 
 ## Assumptions
 
 - The second DLTINS file is required as per specification
 - XML encoding is UTF-8
 - Missing values are handled gracefully in transformations
+- The S3 upload step is simulated, as the assignment does not require provisioning a real AWS bucket
 
 ## Technologies
 

@@ -48,6 +48,23 @@ class FakeHTTPClient:
         return self.zip_bytes
 
 
+class FakeStorageClient:
+    """Fake storage client for integration testing."""
+
+    def __init__(self) -> None:
+        """Initialize the fake storage client."""
+        self.uploaded_files: list[tuple[str, str]] = []
+
+    def upload_file(self, local_path, destination_path: str) -> None:
+        """Record uploaded file information.
+
+        Args:
+            local_path: The local file path.
+            destination_path: The target storage path.
+        """
+        self.uploaded_files.append((str(local_path), destination_path))
+
+
 def create_zip_with_xml(xml_content: str) -> bytes:
     """Create an in-memory ZIP archive containing one XML file.
 
@@ -105,6 +122,7 @@ def test_pipeline_runs_end_to_end(tmp_path) -> None:
     http_client = FakeHTTPClient(register_xml=register_xml, zip_bytes=zip_bytes)
     dataframe_service = DataFrameService()
     output_path = tmp_path / "instruments.csv"
+    storage_client = FakeStorageClient()
 
     pipeline = PipelineService(
         http_client=http_client,
@@ -112,6 +130,7 @@ def test_pipeline_runs_end_to_end(tmp_path) -> None:
         zip_service=ZipService(),
         instrument_service=InstrumentXMLService(),
         dataframe_service=dataframe_service,
+        storage_client=storage_client,
     )
 
     result_path = pipeline.run(output_path=output_path)
@@ -123,3 +142,6 @@ def test_pipeline_runs_end_to_end(tmp_path) -> None:
     assert "FinInstrmGnlAttrbts.Id" in csv_content
     assert "Alpha" in csv_content
     assert "YES" in csv_content
+
+    assert len(storage_client.uploaded_files) == 1
+    assert storage_client.uploaded_files[0][1] == "s3://mock-bucket/instruments.csv"
