@@ -23,3 +23,5 @@ CSV_COLUMNS: list[str] = [
     "a_count",
     "contains_a",
 ]
+
+S3_DESTINATION_PATH: str = "s3://mock-bucket/instruments.csv"
