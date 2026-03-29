@@ -64,7 +64,7 @@ class DataFrameService:
         Returns:
             The number of lowercase 'a' characters, or 0 if missing.
         """
-        if value is None:
+        if not isinstance(value, str):
             return 0
 
         return value.count("a")
