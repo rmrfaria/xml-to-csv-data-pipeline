@@ -50,6 +50,7 @@ pytest
 
 ## Project Structure
 
+```text
 src/data_pipeline/
   clients/          # HTTP client
   services/         # Core pipeline logic
@@ -62,6 +63,7 @@ src/data_pipeline/
 tests/
   unit/
   integration/
+```
 
 ## Design Notes
 
